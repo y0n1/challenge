@@ -1,86 +1,89 @@
 import {
   THRESHOLD_ANNOTATION_ID,
   BELOW_THRESHOLD_COLOR,
-  OVER_THRESHOLD_COLOR,
+  OVER_THRESHOLD_COLOR
 } from "../Constants";
 import { thresholdControl, dataPointsControl } from "./Options";
-import { Snackbar } from "./Snackbar";
-
-let chart = null;
-const defaultDataPoints = {
-  values: [],
-  colors: [],
-};
 
 /**
- * This componet should have been called "Chart",
+ * This componet should have been called 'Chart',
  * however ChartJS hijacked that name violently.
  */
 export default class ChartController {
   constructor(configuration = {}, providerId) {
-    this.configuration = configuration;
-    const currentThreshold = this.getThresholdConfiguration(
-      THRESHOLD_ANNOTATION_ID,
-    ).value;
-    this.updateDataPointsColors(providerId, currentThreshold);
-
-    const canvas = document.querySelector("#chart");
-    const ctx = canvas.getContext("2d");
-    chart = new Chart(ctx, configuration);
+    this._chart = null;
+    this._configuration = configuration;
+    this._defaultDataPoints = {
+      values: [],
+      colors: []
+    };
 
     /**
      * Save the original data we got after the initial request,
      * in order to allow displaying slices of the original data.
      */
-    const dataSetConfig = this.getDataSetConfiguration(providerId);
+    const dataSetConfig = this.getDataSetConfigSection(providerId);
     dataSetConfig.data.forEach((dataPointValue, idx) => {
       const dataPointColor = dataSetConfig.backgroundColor[idx];
-      defaultDataPoints.values.push(dataPointValue);
-      defaultDataPoints.colors.push(dataPointColor);
-    })
+      this._defaultDataPoints.values.push(dataPointValue);
+      this._defaultDataPoints.colors.push(dataPointColor);
+    });
 
-    // reflect the amount of datapoins in the control
-    const maxDataPoints = defaultDataPoints.values.length;
-    dataPointsControl.setAttribute('max', maxDataPoints);
+    const min = Math.min(...dataSetConfig.data);
+    const max = Math.max(...dataSetConfig.data);
+    const avg = (min + max) / 2;
 
-    // do the same for the threshold control, this time we need
-    //the max value
-    const max = Math.max(dataSetConfig.data);
-    thresholdControl.setAttribute('max', max);
+    this.updateThresholdValue(THRESHOLD_ANNOTATION_ID, avg);
+    this.updateDataPointsColors(providerId, avg);
 
+    // reflect the amount of datapoins in the control props
+    const maxDataPoints = this._defaultDataPoints.values.length;
+    dataPointsControl.setAttribute("max", maxDataPoints);
+    dataPointsControl.setAttribute("value", maxDataPoints);
+
+    // reflect avg, min and max proprs on threshold control
+    thresholdControl.setAttribute("min", min);
+    thresholdControl.setAttribute("max", max);
+    thresholdControl.setAttribute("value", avg);
 
     thresholdControl.addEventListener("change", event => {
       const newValue = +event.target.value;
+      const currentThreshold = this.getThresholdConfigSection(
+        THRESHOLD_ANNOTATION_ID
+      ).value;
       if (newValue !== currentThreshold) {
         this.updateThresholdValue(THRESHOLD_ANNOTATION_ID, newValue);
         this.updateDataPointsColors(providerId, newValue);
-        chart.update();
+        this._chart.update();
       }
     });
 
-    dataPointsControl.addEventListener('change', (event) => {
+    dataPointsControl.addEventListener("change", event => {
       const newValue = +event.target.value;
+      const currentThreshold = this.getThresholdConfigSection(
+        THRESHOLD_ANNOTATION_ID
+      ).value;
       this.updateDataPointsAmount(providerId, newValue);
-      chart.update();
+      this.updateDataPointsColors(providerId, currentThreshold);
+      this._chart.update();
     });
+
+    const canvas = document.querySelector("#chart");
+    const ctx = canvas.getContext("2d");
+    this._chart = new Chart(ctx, configuration);
   }
 
   updateDataPointsAmount(providerId, newValue) {
-    if (newValue < 0 || newValue > defaultDataPoints.values.length) {
-      Snackbar.showSnackbar({
-        message: 'Datapoints amount out of bounds!',
-        actiontext: 'Dismiss',
-      });
-
-      return;
-    }
-
-    const targetDataSet = this.getDataSetConfiguration(providerId);
-
+    const targetDataSet = this.getDataSetConfigSection(providerId);
+    targetDataSet.data = this._defaultDataPoints.values.slice(0, newValue);
+    targetDataSet.backgroundColor = this._defaultDataPoints.colors.slice(
+      0,
+      newValue
+    );
   }
 
-  getThresholdConfiguration(thresholdAnnotationId) {
-    const rootObj = chart == null ? this.configuration: chart;
+  getThresholdConfigSection(thresholdAnnotationId) {
+    const rootObj = this._chart == null ? this._configuration : this._chart;
     const [thresholdConfig] = rootObj.options.annotation.annotations.filter(
       annotation => annotation.$$id$$ === thresholdAnnotationId
     );
@@ -89,12 +92,14 @@ export default class ChartController {
   }
 
   updateThresholdValue(thresholdAnnotationId, newValue) {
-    const thresholdConfig = this.getThresholdConfiguration(thresholdAnnotationId);
+    const thresholdConfig = this.getThresholdConfigSection(
+      thresholdAnnotationId
+    );
     thresholdConfig.value = newValue;
   }
 
-  getDataSetConfiguration(datasetId) {
-    const rootObj = chart == null ? this.configuration: chart;
+  getDataSetConfigSection(datasetId) {
+    const rootObj = this._chart == null ? this._configuration : this._chart;
     const [targetDataSet] = rootObj.data.datasets.filter(
       dataset => dataset.$$id$$ === datasetId
     );
@@ -102,19 +107,12 @@ export default class ChartController {
     return targetDataSet;
   }
 
-  setDataPointsColors(data, threshold, belowColor, overColor) {
-    return data.map(datum => (datum >= threshold ? overColor : belowColor));
-  }
-
   updateDataPointsColors(datasetId, thresholdValue) {
-    const targetDataSet = this.getDataSetConfiguration(datasetId);
+    const targetDataSet = this.getDataSetConfigSection(datasetId);
 
     if (targetDataSet.data.length > 0) {
-      targetDataSet.backgroundColor = this.setDataPointsColors(
-        targetDataSet.data,
-        thresholdValue,
-        BELOW_THRESHOLD_COLOR,
-        OVER_THRESHOLD_COLOR
+      targetDataSet.backgroundColor = targetDataSet.data.map(datum =>
+        datum >= thresholdValue ? OVER_THRESHOLD_COLOR : BELOW_THRESHOLD_COLOR
       );
     }
   }

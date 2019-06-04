@@ -53,3 +53,7 @@
   width: var(--spinner-diameter);
   height: var(--spinner-diameter);
 }
+
+.mdl-textfield__input.mdl-textfield__input--align-right {
+  text-align: right;
+}

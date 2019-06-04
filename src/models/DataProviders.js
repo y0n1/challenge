@@ -1,14 +1,11 @@
-export default [
-  {
-    name: 'OpenWeatherMap.org',
-    id: 'owm'
-  },
-  {
-    name: 'CoinAPI.io',
-    id: 'coinapi'
-  },
-  {
-    name: 'OpenAQ.org',
-    id: 'openaq'
-  },
-]
+export const byId = {
+  owm: 'owm',
+  coinapi: 'coinapi',
+  openaq: 'openaq',
+}
+
+export const byName = {
+  owm:'OpenWeatherMap.org',
+  coinapi: 'CoinAPI.io',
+  openaq: 'OpenAQ.org',
+}

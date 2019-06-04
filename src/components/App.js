@@ -24,8 +24,6 @@ export default class App {
   static async switchTo(providerId) {
     const dataProviderProxy = new DataProviderProxy(providerId);
     const rawData = await dataProviderProxy.getdata();
-    console.log(rawData);
-
     const dataBuilder = new ChartDataBuilder(rawData, providerId);
     const data = dataBuilder.getResult();
     const configurationBuilder = new ChartConfigurationBuilder(data, providerId);

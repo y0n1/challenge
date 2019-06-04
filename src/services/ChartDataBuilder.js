@@ -1,22 +1,25 @@
 import Snackbar from '../components/Snackbar';
-
-let _provider = null;
-const _labels = [];
-const _data = []
-let _metricName = null;
+import { byId } from '../models/DataProviders';
 
 export default class ChartDataBuilder {
   constructor(rawData, provider) {
+    this._metricName = null;
+    this._provider = null;
+    this._labels = [];
+    this._data = []
+
     switch (provider) {
-      case 'owm':
+      case byId.owm:
+        throw new Error("Not Implemented!")
         break;
-      case 'coinapi':
+      case byId.coinapi:
+        throw new Error("Not Implemented!")
         break;
-      case 'openaq':
-        _provider = provider;
-        rawData.forEach(datum => _labels.push(datum.date));
-        rawData.map(datum => _data.push(datum.value));
-        _metricName = rawData[0].metric;
+      case byId.openaq:
+        this._metricName = rawData[0].metric;
+        this._provider = provider;
+        rawData.forEach(datum => this._labels.push(datum.date));
+        rawData.forEach(datum => this._data.push(datum.value));
         break;
 
       default:
@@ -30,12 +33,12 @@ export default class ChartDataBuilder {
 
   getResult() {
     return {
-      labels: _labels,
+      labels: this._labels,
       datasets: [
         {
-          $$id$$: _provider,
-          label: _metricName,
-          data: _data,
+          $$id$$: this._provider,
+          label: this._metricName,
+          data: this._data,
           fill: false,
           backgroundColor: [],
           borderWidth: 2

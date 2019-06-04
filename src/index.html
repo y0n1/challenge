@@ -21,19 +21,18 @@
     </header>
     <div class="mdl-layout__drawer">
       <span class="mdl-layout-title">Options</span>
-      <form action="#">
         <ul class="options-list-control mdl-list">
           <li class="mdl-list__item">
-            <span class="mdl-list__item-primary-action">
-              <div class="mdl-textfield mdl-js-textfield">
+            <span class="mdl-list__item-primary-content">
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                 <input
-                  class="mdl-textfield__input"
+                  class="mdl-textfield__input mdl-textfield__input--align-right"
                   type="number"
                   min="0"
                   max="10"
                   step="1"
                   id="data-points-control" />
-                <label class="mdl-textfield__label" for="data-points">Data Points...</label>
+                <label class="mdl-textfield__label" for="data-points">Data Points</label>
                 <span class="mdl-textfield__error">Value out of range!</span>
               </div>
             </span>
@@ -41,15 +40,15 @@
 
           <li class="mdl-list__item">
             <span class="mdl-list__item-primary-content">
-              <div class="mdl-textfield mdl-js-textfield">
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                 <input
-                  class="mdl-textfield__input"
+                  class="mdl-textfield__input mdl-textfield__input--align-right"
                   type="number"
                   min="0"
                   max="10"
                   step="0.1"
                   id="threshold-control" />
-                <label class="mdl-textfield__label" for="data-points">Threshold...</label>
+                <label class="mdl-textfield__label" for="data-points">Threshold</label>
                 <span class="mdl-textfield__error">Value out of range!</span>
               </div>
             </span>
@@ -69,7 +68,6 @@
             </span>
           </li>
         </ul>
-      </form>
     </div>
 
     <main class="mdl-layout__content">
