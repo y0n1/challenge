@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Chartly</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <noscript>You need to enable JavaScript in order to see this content</noscript>
+
+  <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+    <header class="mdl-layout__header">
+      <div class="mdl-layout__header-row">
+        <span class="mdl-layout-title">Chartly</span>
+      </div>
+    </header>
+    <div class="mdl-layout__drawer">
+      <span class="mdl-layout-title">Options</span>
+      <form action="#">
+        <ul class="options-list-control mdl-list">
+          <li class="mdl-list__item">
+            <span class="mdl-list__item-primary-action">
+              <div class="mdl-textfield mdl-js-textfield">
+                <input
+                  class="mdl-textfield__input"
+                  type="number"
+                  min="0"
+                  max="10"
+                  step="1"
+                  id="data-points-control" />
+                <label class="mdl-textfield__label" for="data-points">Data Points...</label>
+                <span class="mdl-textfield__error">Value out of range!</span>
+              </div>
+            </span>
+          </li>
+
+          <li class="mdl-list__item">
+            <span class="mdl-list__item-primary-content">
+              <div class="mdl-textfield mdl-js-textfield">
+                <input
+                  class="mdl-textfield__input"
+                  type="number"
+                  min="0"
+                  max="10"
+                  step="0.1"
+                  id="threshold-control" />
+                <label class="mdl-textfield__label" for="data-points">Threshold...</label>
+                <span class="mdl-textfield__error">Value out of range!</span>
+              </div>
+            </span>
+          </li>
+
+          <li class="mdl-list__item">
+            <span class="mdl-list__item-primary-action">
+              <div class="mdl-selectfield mdl-js-selectfield mdl-selectfield--floating-label">
+                <select id="provider-selector" name="" class="mdl-selectfield__select">
+                  <option value="openaq">OpenAQ.org</option>
+                  <option value="owm">OpenWeatherMap.org</option>
+                  <option value="coinapi">CoinAPI.io</option>
+                </select>
+                <label class="mdl-selectfield__label" for="provider-selector">Choose a data provider...</label>
+                <span class="mdl-selectfield__error">Input is not a empty!</span>
+              </div>
+            </span>
+          </li>
+        </ul>
+      </form>
+    </div>
+
+    <main class="mdl-layout__content">
+      <div class="page-content">
+        <canvas id="chart" width="400" height="400"></canvas>
+      </div>
+    </main>
+
+    <section id="snackbar" class="mdl-js-snackbar mdl-snackbar">
+      <div class="mdl-snackbar__text"></div>
+      <button class="mdl-snackbar__action" type="button"></button>
+    </section>
+
+    <section id="loading-overlay" class="mdl-layout__obfuscator">
+      <div id="spinner" class="mdl-spinner mdl-js-spinner"></div>
+    </section>
+  </div>
+
+  <script src="./index.ts"></script>
+</body>
+
+</html>

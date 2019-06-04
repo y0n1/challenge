@@ -1,0 +1,27 @@
+{
+  "name": "challenge",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "parcel src/index.html --open",
+    "build": "parcel build src/index.html"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chart.js": "^2.8.0",
+    "chartjs-plugin-annotation": "^0.5.7",
+    "material-design-lite": "^1.3.0",
+    "mdl-select-component": "0.0.9",
+    "moment": "^2.24.0",
+    "parcel-bundler": "^1.12.3"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.4.5",
+    "@types/material-design-lite": "^1.1.15",
+    "typescript": "^3.5.1"
+  },
+  "browserslist": "last 1 chrome version"
+}

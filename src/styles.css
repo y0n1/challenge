@@ -1,0 +1,55 @@
+@import url("../node_modules/material-design-lite/material.css");
+@import url("../node_modules/mdl-select-component/mdl-selectfield.min.css");
+
+/* CSS Overrides */
+
+:root {
+  --app-drawer-width: 300px;
+  --spinner-diameter: 2.5rem;
+}
+
+.mdl-textfield,
+.mdl-selectfield {
+  width: calc(var(--app-drawer-width) * 0.9);
+}
+
+#chart-canvas {
+  user-select: none;
+}
+
+.mdl-layout__drawer {
+  width: var(--app-drawer-width);
+  transform: translateX(calc(-1 * var(--app-drawer-width)));
+}
+
+.options-list-control {
+  width: var(--app-drawer-width);
+}
+
+.mdl-selectfield__list-option-box {
+  position: relative;
+  top: -16px;
+}
+
+.page-content {
+  width: 75%;
+  margin: 0 auto;
+  position: relative;
+  top: 15%;
+}
+
+@media only screen and (orientation: landscape) {
+  .page-content {
+    width: 40%;
+    top: 0%;
+  }
+}
+
+#spinner {
+  position: fixed;
+  top: 1rem;
+  right: 1.25rem;
+  z-index: 999;
+  width: var(--spinner-diameter);
+  height: var(--spinner-diameter);
+}
