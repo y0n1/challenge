@@ -39,8 +39,15 @@ export default class ChartController {
       defaultDataPoints.colors.push(dataPointColor);
     })
 
+    // reflect the amount of datapoins in the control
     const maxDataPoints = defaultDataPoints.values.length;
-    this.reflectMaxAttributeOnControls(maxDataPoints);
+    dataPointsControl.setAttribute('max', maxDataPoints);
+
+    // do the same for the threshold control, this time we need
+    //the max value
+    const max = Math.max(dataSetConfig.data);
+    thresholdControl.setAttribute('max', max);
+
 
     thresholdControl.addEventListener("change", event => {
       const newValue = +event.target.value;
@@ -56,11 +63,6 @@ export default class ChartController {
       this.updateDataPointsAmount(providerId, newValue);
       chart.update();
     });
-  }
-
-  reflectMaxAttributeOnControls(max) {
-    thresholdControl.setAttribute('max', max);
-    dataPointsControl.setAttribute('max', max);
   }
 
   updateDataPointsAmount(providerId, newValue) {
