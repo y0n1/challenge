@@ -38,6 +38,7 @@ export default class ChartConfigurationBuilder {
       type: "line",
       data: this.data,
       options: {
+        events: [],
         responsive: true,
         scales: this.scales,
         annotation: this.annotation

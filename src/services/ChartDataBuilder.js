@@ -1,31 +1,37 @@
-import Snackbar from '../components/Snackbar';
-import { byId } from '../models/DataProviders';
+import Snackbar from "../components/Snackbar";
+import { byId } from "../models/DataProviders";
 
 export default class ChartDataBuilder {
   constructor(rawData, provider) {
+    this._provider = provider;
     this._metricName = null;
-    this._provider = null;
     this._labels = [];
-    this._data = []
+    this._data = [];
 
     switch (provider) {
-      case byId.owm:
-        throw new Error("Not Implemented!")
-        break;
-      case byId.coinapi:
-        throw new Error("Not Implemented!")
+      case byId.meetup:
+        this._metricName = "Members per meetup ID in USA";
+        rawData.forEach(datum => this._labels.push(datum.id));
+        rawData.forEach(datum => this._data.push(datum.memberCount));
         break;
       case byId.openaq:
-        this._metricName = rawData[0].metric;
-        this._provider = provider;
+        this._metricName = "Carbon Monoxide (CO)";
         rawData.forEach(datum => this._labels.push(datum.date));
         rawData.forEach(datum => this._data.push(datum.value));
+        break;
+      case byId.coinapi:
+        this._metricName = "BTC/USD Exchange Rate";
+        rawData.forEach(datum => this._labels.push(datum.time));
+        rawData.forEach(datum => this._data.push(datum.rate));
         break;
 
       default:
         Snackbar.showSnackbar({
           message: `${provider} isn't a valid provider`,
-          actionText: 'Dismiss'
+          actionText: "Dismiss",
+          actionHandler: (event) => {
+            Snackbar.cleanup_();
+          }
         });
         break;
     }
