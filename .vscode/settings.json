@@ -2,6 +2,6 @@
     "appService.zipIgnorePattern": [
         ".vscode{,/**}"
     ],
-    "appService.defaultWebAppToDeploy": "/subscriptions/a98c045c-f48b-43fb-bdcd-38c78d97a0e7/resourceGroups/rg1/providers/Microsoft.Web/sites/ms-challenge",
-    "appService.deploySubpath": ""
+    "appService.deploySubpath": "",
+    "appService.defaultWebAppToDeploy": "/subscriptions/a98c045c-f48b-43fb-bdcd-38c78d97a0e7/resourceGroups/appsvc_rg_linux_centralus/providers/Microsoft.Web/sites/y0n1-challenge"
 }
