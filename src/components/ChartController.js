@@ -3,7 +3,12 @@ import {
   BELOW_THRESHOLD_COLOR,
   OVER_THRESHOLD_COLOR
 } from "../Constants";
-import { thresholdControl, dataPointsControl } from "./Options";
+import {
+  thresholdControl,
+  dataPointsControl,
+} from "./Options";
+import DataProviderProxy from "../services/DataProviderProxy";
+
 
 /**
  * This componet should have been called 'Chart',
@@ -11,6 +16,7 @@ import { thresholdControl, dataPointsControl } from "./Options";
  */
 export default class ChartController {
   constructor(configuration = {}, providerId) {
+    this._providerId = providerId;
     this._chart = null;
     this._configuration = configuration;
     this._defaultDataPoints = {
@@ -22,7 +28,7 @@ export default class ChartController {
      * Save the original data we got after the initial request,
      * in order to allow displaying slices of the original data.
      */
-    const dataSetConfig = this.getDataSetConfigSection(providerId);
+    const dataSetConfig = this.getDataSetConfigSection(this._providerId);
     dataSetConfig.data.forEach((dataPointValue, idx) => {
       const dataPointColor = dataSetConfig.backgroundColor[idx];
       this._defaultDataPoints.values.push(dataPointValue);
@@ -34,7 +40,7 @@ export default class ChartController {
     const avg = (min + max) / 2;
 
     this.updateThresholdValue(THRESHOLD_ANNOTATION_ID, avg);
-    this.updateDataPointsColors(providerId, avg);
+    this.updateDataPointsColors(this._providerId, avg);
 
     // reflect the amount of datapoins in the control props
     const maxDataPoints = this._defaultDataPoints.values.length;
@@ -46,35 +52,57 @@ export default class ChartController {
     thresholdControl.setAttribute("max", max);
     thresholdControl.setAttribute("value", avg);
 
-    thresholdControl.addEventListener("change", event => {
-      const newValue = +event.target.value;
-      const currentThreshold = this.getThresholdConfigSection(
-        THRESHOLD_ANNOTATION_ID
-      ).value;
-      if (newValue !== currentThreshold) {
-        this.updateThresholdValue(THRESHOLD_ANNOTATION_ID, newValue);
-        this.updateDataPointsColors(providerId, newValue);
-        this._chart.update();
-      }
+    const thresholdChangeListener = this.handleThresholdChange.bind(this);
+    thresholdControl.$listeners.push({
+      eventName: "change",
+      eventListener: thresholdChangeListener
     });
+    thresholdControl.addEventListener("change", thresholdChangeListener);
 
-    dataPointsControl.addEventListener("change", event => {
-      const newValue = +event.target.value;
-      const currentThreshold = this.getThresholdConfigSection(
-        THRESHOLD_ANNOTATION_ID
-      ).value;
-      this.updateDataPointsAmount(providerId, newValue);
-      this.updateDataPointsColors(providerId, currentThreshold);
-      this._chart.update();
+    const dataPointsChangeListener = this.handleDataPointsChange.bind(this);
+    dataPointsControl.$listeners.push({
+      eventName: "change",
+      eventListener: dataPointsChangeListener
     });
+    dataPointsControl.addEventListener("change", dataPointsChangeListener);
 
-    const canvas = document.querySelector("#chart");
+    let canvas = document.querySelector("canvas");
+    if (canvas) {
+      canvas.remove();
+    } else {
+      canvas = document.createElement("canvas");
+    }
+
+    const pageContent = document.querySelector(".page-content");
+    pageContent.appendChild(canvas);
     const ctx = canvas.getContext("2d");
     this._chart = new Chart(ctx, configuration);
   }
 
+  handleDataPointsChange(event) {
+    const newValue = +event.target.value;
+    const currentThreshold = this.getThresholdConfigSection(
+      THRESHOLD_ANNOTATION_ID
+    ).value;
+    this.updateDataPointsAmount(this._providerId, newValue);
+    this.updateDataPointsColors(this._providerId, currentThreshold);
+    this._chart.update();
+  }
+
+  handleThresholdChange(event) {
+    const newValue = +event.target.value;
+    const currentThreshold = this.getThresholdConfigSection(
+      THRESHOLD_ANNOTATION_ID
+    ).value;
+    if (newValue !== currentThreshold) {
+      this.updateThresholdValue(THRESHOLD_ANNOTATION_ID, newValue);
+      this.updateDataPointsColors(this._providerId, newValue);
+      this._chart.update();
+    }
+  }
+
   updateDataPointsAmount(providerId, newValue) {
-    const targetDataSet = this.getDataSetConfigSection(providerId);
+    const targetDataSet = this.getDataSetConfigSection(this._providerId);
     targetDataSet.data = this._defaultDataPoints.values.slice(0, newValue);
     targetDataSet.backgroundColor = this._defaultDataPoints.colors.slice(
       0,

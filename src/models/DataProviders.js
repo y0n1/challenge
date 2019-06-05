@@ -1,11 +1,9 @@
 export const byId = {
-  owm: 'owm',
-  coinapi: 'coinapi',
+  meetup: 'meetup',
   openaq: 'openaq',
 }
 
 export const byName = {
-  owm:'OpenWeatherMap.org',
-  coinapi: 'CoinAPI.io',
+  meetup:'Meetup.com',
   openaq: 'OpenAQ.org',
 }

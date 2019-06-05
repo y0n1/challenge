@@ -9,9 +9,11 @@ import { Snackbar } from "./components/Snackbar.js";
 App.main().catch(error => {
   Snackbar.showSnackbar({
     message: error,
-    timeout: 10000,
+    timeout: 3000,
     actionText: 'Dismiss',
-    actionHandler: (event) => console.error(error)
+    actionHandler: (event) => {
+      Snackbar.cleanup_();
+    }
   });
 });
 

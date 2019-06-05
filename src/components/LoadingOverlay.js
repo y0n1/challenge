@@ -21,7 +21,13 @@ class LoadingOverlayImpl {
 
   show() {
     const { overlayRef, spinnerRef } = refs;
-    Snackbar.showSnackbar({ message: "Loading..." });
+    Snackbar.showSnackbar({
+      message: "Loading...",
+      actionText: "Dismiss",
+      actionHandler: event => {
+        Snackbar.cleanup_();
+      }
+    });
     overlayRef.classList.add("is-visible");
     spinnerRef.classList.add("is-active");
     state.isActive = true;
