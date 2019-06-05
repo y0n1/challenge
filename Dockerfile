@@ -1,8 +1,6 @@
-FROM node:latest
+FROM node:10.16-alpine
 
 WORKDIR /app
-
-RUN npm run build
 
 ADD dist /app/dist
 
