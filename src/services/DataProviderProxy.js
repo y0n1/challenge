@@ -17,10 +17,6 @@ const urlBuilder = providerId => {
         .toISOString();
       url = `https://api.openaq.org/v1/measurements?country=HK&order_by=parameter&date_from=${twoMonthsFromNow}&location=Central`;
       break;
-    case byId.coinapi:
-      url =
-        "https://rest.coinapi.io/v1/exchangerate/BTC/USD?apikey=26409A92-0B27-4DAB-ACAE-5D06DD82439B";
-      break;
     default:
       Snackbar.showSnackbar({
         message: `${provider} isn't a valid provider`,
@@ -54,11 +50,6 @@ const responseBuilder = (responseData, providerId) => {
         id: result.id,
         memberCount: result["member_count"]
       }));
-      break;
-    }
-    case byId.coinapi: {
-      const { time, rate } = responseData;
-      actualResponse = [{ rate, time }];
       break;
     }
     default:

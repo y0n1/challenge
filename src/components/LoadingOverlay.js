@@ -24,7 +24,6 @@ class LoadingOverlayImpl {
     Snackbar.showSnackbar({
       message: "Loading...",
       actionText: "Dismiss",
-      timeout: 3000,
       actionHandler: event => {
         Snackbar.cleanup_();
       }

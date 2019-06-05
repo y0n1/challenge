@@ -1,7 +1,6 @@
 import {
   providerSelector,
   thresholdControl,
-  pollingControl,
   dataPointsControl,
   removeListeners
 } from "./Options";
@@ -28,8 +27,7 @@ export default class App {
        */
       removeListeners([
         thresholdControl,
-        pollingControl,
-        dataPointsControl
+        dataPointsControl,
       ]);
       App.switchTo(providerId);
     });

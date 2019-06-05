@@ -6,12 +6,8 @@ import {
 import {
   thresholdControl,
   dataPointsControl,
-  pollingControlContainer,
-  pollingControl
 } from "./Options";
-import { byId } from "../models/DataProviders";
 import DataProviderProxy from "../services/DataProviderProxy";
-import { Snackbar } from "../components/Snackbar";
 
 
 /**
@@ -27,12 +23,6 @@ export default class ChartController {
       values: [],
       colors: []
     };
-    this._pollingInterval = null;
-    this._abortController = new AbortController();
-    this._dataProviderProxy = new DataProviderProxy(
-      this._providerId,
-      this._abortController
-    );
 
     /**
      * Save the original data we got after the initial request,
@@ -62,14 +52,6 @@ export default class ChartController {
     thresholdControl.setAttribute("max", max);
     thresholdControl.setAttribute("value", avg);
 
-    // CoinAPI is the only provider for which we currently offer RT data by
-    // performing long polling
-    if (this._providerId === byId.coinapi) {
-      pollingControlContainer.classList.remove("hidden");
-    } else {
-      pollingControlContainer.classList.add("hidden");
-    }
-
     const thresholdChangeListener = this.handleThresholdChange.bind(this);
     thresholdControl.$listeners.push({
       eventName: "change",
@@ -84,13 +66,6 @@ export default class ChartController {
     });
     dataPointsControl.addEventListener("change", dataPointsChangeListener);
 
-    const pollingChangeListener = this.handlePollingChange.bind(this);
-    pollingControl.$listeners.push({
-      eventName: "change",
-      eventListener: pollingChangeListener
-    });
-    pollingControl.addEventListener("change", pollingChangeListener);
-
     let canvas = document.querySelector("canvas");
     if (canvas) {
       canvas.remove();
@@ -102,33 +77,6 @@ export default class ChartController {
     pageContent.appendChild(canvas);
     const ctx = canvas.getContext("2d");
     this._chart = new Chart(ctx, configuration);
-  }
-
-  handlePollingChange(event) {
-    if (!pollingControl.checked) {
-      this._abortController.abort();
-      clearInterval(this._pollingInterval);
-    } else {
-      this._pollingInterval = setInterval(async () => {
-        try {
-          const [{ time, rate }] = await this._dataProviderProxy.getdata();
-          let { data } = this.getDataSetConfigSection(this._providerId);
-          let { labels } = this._chart.data
-
-          data.push(rate);
-          labels.push(time);
-          this.updateDataPointsColors();
-          this._chart.update();
-        } catch (error) {
-          Snackbar.showSnackbar({
-            message: `Server error; we'll stop polling.`,
-          });
-        } finally {
-          clearInterval(this._pollingInterval);
-          pollingControl.checked = false;
-        }
-      }, 10000);
-    }
   }
 
   handleDataPointsChange(event) {
