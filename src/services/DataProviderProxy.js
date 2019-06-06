@@ -9,7 +9,7 @@ const urlBuilder = providerId => {
   switch (providerId) {
     case byId.meetup:
       url =
-        "https://api.meetup.com/2/cities?sign=true&photo-host=public&page=200&country=us";
+        "https://api.meetup.com/2/cities?sign=true&photo-host=public&page=200&country=us&apikey=355a661f236c3346637d383430756973";
       break;
     case byId.openaq:
       const twoMonthsFromNow = moment()
